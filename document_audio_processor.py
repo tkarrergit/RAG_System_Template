@@ -41,6 +41,7 @@ class DocumentAudioProcessor:
                     logger.debug("Gefundene Datei: %s", os.path.join(root, file))
         
         logger.info("Suche abgeschlossen. Gefundene Dateien: %d", len(file_paths))
+        logger.info("File Pfade sind: ", file_paths)
         return file_paths
 
     def extract_text_from_pdf(self, file_path):

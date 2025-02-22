@@ -1,10 +1,13 @@
 import requests
 import chromadb
-import numpy as np
+from document_audio_processor import DocumentAudioProcessor
 from log_config import logger
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+import numpy as np
+import os
+
 
 # 🔹 LLM-Anbindung über LM Studio API
 class LLMClient:
@@ -30,7 +33,7 @@ class LLMClient:
             logger.error(f"❌ Fehler beim LLM-Request: {response.status_code}")
             return "Fehler: Keine Antwort erhalten."
 
-class RAGSystemTools:
+class RAGSystemTools(DocumentAudioProcessor):
     def __init__(self, db_path="./vector_db"):
         self.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2", model_kwargs={"device": "cpu"})
         self.db = chromadb.PersistentClient(path=db_path)
@@ -38,6 +41,13 @@ class RAGSystemTools:
         self.llm = LLMClient()
         logger.info("✅ RAGSystem initialisiert.")
 
+    def process_documents_paths(self):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        folder_path = os.path.join(base_dir, "documents/")
+        extensions = [".pdf", ".docx", ".epub", ".txt", ".odt"]
+        file_paths = dap.create_path_of_files_with_extensions(folder_path, extensions)
+        return file_paths
+    
     def text_splitter(self, text):
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)
         chunks = text_splitter.split_text(text)
