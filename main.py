@@ -1,5 +1,5 @@
 import document_audio_processor as dap
-import rag_system as rs
+import rag_system_tools as rs
 import os
 """
 processor = dap.DocumentAudioProcessor()
@@ -18,10 +18,16 @@ print("Transkribierter Text:", transcribed_text)
 print("Audio-Embedding-Shape:", audio_embedding.shape)"""
 
 # ✅ Beispiel: PDF verarbeiten
-rag = rs.RAGSystem()
+rag = rs.RAGSystemTools()
+dap = dap.DocumentAudioProcessor()
 base_dir = os.path.dirname(os.path.abspath(__file__))
-pdf_path = os.path.join(base_dir, "documents/example.pdf")
-text = rag.extract_text_from_pdf(pdf_path)
+folder_path = os.path.join(base_dir, "documents/")
+extensions = [".pdf", ".docx", ".epub", ".txt", ".odt"]
+file_paths = dap.create_path_of_files_with_extensions(folder_path, extensions)
+print(file_paths)
+
+#pdf_path = os.path.join(base_dir, "documents/example.pdf")
+text = dap.process_document(pdf_path)
 chunks = rag.text_splitter(text)
 embeddings = rag.create_embedding(chunks)
 rag.store_embeddings(chunks, embeddings)

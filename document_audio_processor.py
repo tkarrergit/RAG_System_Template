@@ -10,7 +10,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from log_config import logger
 
 
-
 class DocumentAudioProcessor:
     def __init__(self, model_path=f"assets/vosk-model-small-de-zamia-0.3"):
         logger.info("Initialisiere DocumentAudioProcessor")
@@ -25,6 +24,25 @@ class DocumentAudioProcessor:
         self.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2", model_kwargs={"device": "cpu"})
         logger.info("Embedding-Modell erfolgreich geladen")
     
+    def create_path_of_files_with_extensions(self, folder_path, extensions):
+        """
+        Sucht in einem Ordner nach Dateien mit bestimmten Endungen und gibt eine Liste der Dateipfade zurück.
+
+        :param folder_path: Pfad zum Ordner, in dem gesucht werden soll.
+        :param extensions: Liste der Dateiendungen, nach denen gesucht werden soll (z.B. ['.pdf', '.docx']).
+        :return: Liste der Dateipfade.
+        """
+        logger.info("Suche nach Dateien in Ordner: %s mit Endungen: %s", folder_path, extensions)
+        file_paths = []
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                if any(file.lower().endswith(ext) for ext in extensions):
+                    file_paths.append(os.path.join(root, file))
+                    logger.debug("Gefundene Datei: %s", os.path.join(root, file))
+        
+        logger.info("Suche abgeschlossen. Gefundene Dateien: %d", len(file_paths))
+        return file_paths
+
     def extract_text_from_pdf(self, file_path):
         logger.info("Extrahiere Text aus PDF: %s", file_path)
         loader = PyPDFLoader(file_path)
@@ -41,7 +59,7 @@ class DocumentAudioProcessor:
         logger.info("Extrahiere Text aus EPUB: %s", file_path)
         loader = UnstructuredEPubLoader(file_path)
         document = loader.load()
-        return "\n".join([doc.page_content for doc in document])
+        return "\n".join([doc.page_content for doc in document]) 
     
     def extract_text_from_txt(self, file_path):
         logger.info("Extrahiere Text aus TXT: %s", file_path)

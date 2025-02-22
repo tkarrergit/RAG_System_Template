@@ -30,7 +30,7 @@ class LLMClient:
             logger.error(f"❌ Fehler beim LLM-Request: {response.status_code}")
             return "Fehler: Keine Antwort erhalten."
 
-class RAGSystem:
+class RAGSystemTools:
     def __init__(self, db_path="./vector_db"):
         self.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2", model_kwargs={"device": "cpu"})
         self.db = chromadb.PersistentClient(path=db_path)
