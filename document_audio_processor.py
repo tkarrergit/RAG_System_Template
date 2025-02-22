@@ -20,9 +20,6 @@ class DocumentAudioProcessor:
         
         self.vosk_model = Model(model_path)
         logger.info("Vosk-Modell erfolgreich geladen")
-        
-        self.embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2", model_kwargs={"device": "cpu"})
-        logger.info("Embedding-Modell erfolgreich geladen")
     
     def create_path_of_files_with_extensions(self, folder_path, extensions):
         """
