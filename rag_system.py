@@ -59,22 +59,26 @@ class RAGSystem:
         logging.debug(f"📄 Extrahierter Text (erster 200 Zeichen): {text[:200]}...")
         return text
 
-    def create_embedding(self, text):
+    def text_splitter(self, text):
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)
-        texts = text_splitter.split_text(text)
-        embeddings = self.embedding_model.embed_documents(texts)
-        logging.info(f"✅ {len(texts)} Text-Chunks erstellt und eingebettet.")
-        return texts, np.array(embeddings)
+        chunks = text_splitter.split_text(text)
+        logging.info(f"✅ {len(chunks)} Text-Chunks erstellt.")
+        return chunks
 
-    def store_embeddings(self, texts, embeddings):
+    def create_embedding(self, chunks):
+        embeddings = self.embedding_model.embed_documents(chunks)
+        logging.info(f"✅ {len(chunks)} Text-Chunks eingebettet.")
+        return np.array(embeddings)
+
+    def store_embeddings(self, chunks, embeddings):
         existing_ids = len(self.collection.get()["ids"]) if self.collection.get() else 0
-        for i, (chunk, embedding) in enumerate(zip(texts, embeddings)):
+        for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
             self.collection.add(
                 ids=[str(i + existing_ids)],  # IDs fortlaufend vergeben
                 documents=[chunk],
                 embeddings=[embedding.tolist()]
             )
-        logging.info(f"✅ {len(texts)} Chunks in die Vektordatenbank gespeichert.")
+        logging.info(f"✅ {len(chunks)} Chunks in die Vektordatenbank gespeichert.")
         logging.debug(f"📌 Anzahl gespeicherter Embeddings: {len(self.collection.get()['documents'])}")
 
     def retrieve_relevant_chunks(self, query, n_results=3):

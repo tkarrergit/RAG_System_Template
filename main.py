@@ -22,7 +22,8 @@ rag = rs.RAGSystem()
 base_dir = os.path.dirname(os.path.abspath(__file__))
 pdf_path = os.path.join(base_dir, "documents/example.pdf")
 text = rag.extract_text_from_pdf(pdf_path)
-chunks, embeddings = rag.create_embedding(text)
+chunks = rag.text_splitter(text)
+embeddings = rag.create_embedding(chunks)
 rag.store_embeddings(chunks, embeddings)
 
 # ✅ Frage stellen und Antwort von Gemma 2 7B erhalten
