@@ -8,6 +8,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader, UnstructuredWordDocumentLoader, TextLoader, UnstructuredEPubLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from log_config import logger
+from odf.opendocument import load
+from odf.text import P
 
 
 class DocumentAudioProcessor:
@@ -38,7 +40,7 @@ class DocumentAudioProcessor:
                     logger.debug("Gefundene Datei: %s", os.path.join(root, file))
         
         logger.info("Suche abgeschlossen. Gefundene Dateien: %d", len(file_paths))
-        logger.info("File Pfade sind: ", file_paths)
+        logger.info(f"File Pfade sind: {file_paths}")
         return file_paths
 
     def extract_text_from_pdf(self, file_path):
@@ -66,9 +68,21 @@ class DocumentAudioProcessor:
         return document[0].page_content if document else ""
     
     def extract_text_from_odt(self, file_path):
-        logger.info("Extrahiere Text aus ODT: %s", file_path)
-        elements = partition(filename=file_path)
-        return "\n".join([str(el) for el in elements])
+        """
+        Extrahiert den Text aus einer ODT-Datei.
+        """
+        try:
+            logger.info("Extrahiere Text aus ODT: %s", file_path)
+            odt_doc = load(file_path)
+            text_content = []
+            
+            for element in odt_doc.getElementsByType(P):
+                text_content.append(element.firstChild.data if element.firstChild else "")
+            
+            return "\n".join(text_content)
+        except Exception as e:
+            logger.error("Fehler beim Extrahieren des Textes: %s", str(e))
+            return ""
     
     def transcribe_audio(self, audio_path):
         logger.info("Transkribiere Audio: %s", audio_path)

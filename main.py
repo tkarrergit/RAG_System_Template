@@ -1,6 +1,14 @@
 import rag_system_tools as rst
+import os
 
 rag = rst.RAGSystemTools()
+
+def process_documents_paths():
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        folder_path = os.path.join(base_dir, "documents/")
+        extensions = [".pdf", ".docx", ".epub", ".txt", ".odt"]
+        file_paths = rag.create_path_of_files_with_extensions(folder_path, extensions)
+        return file_paths
 
 def process_files(file_paths):
     for file_path in file_paths:
@@ -9,7 +17,7 @@ def process_files(file_paths):
         embeddings = rag.create_embedding(chunks)
         rag.store_embeddings(chunks, embeddings)
 
-file_paths = rag.process_documents_paths()
+file_paths = process_documents_paths()
 process_files(file_paths)
 
 # ✅ Frage stellen und Antwort von Gemma 2 7B erhalten
