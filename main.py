@@ -16,6 +16,7 @@ def process_files(file_paths):
         chunks = rag.text_splitter(text)
         embeddings = rag.create_embedding(chunks)
         rag.store_embeddings(chunks, embeddings)
+        rag.move_processed_file(file_path, "processed_documents")
 
 file_paths = process_documents_paths()
 process_files(file_paths)

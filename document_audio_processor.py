@@ -10,6 +10,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from log_config import logger
 from odf.opendocument import load
 from odf.text import P
+import shutil
 
 
 class DocumentAudioProcessor:
@@ -42,6 +43,26 @@ class DocumentAudioProcessor:
         logger.info("Suche abgeschlossen. Gefundene Dateien: %d", len(file_paths))
         logger.info(f"File Pfade sind: {file_paths}")
         return file_paths
+
+    def move_processed_file(self, file_path: str, target_dir: str) -> str:
+        """
+        Verschiebt eine Datei in ein bestimmtes Verzeichnis.
+        Erstellt das Zielverzeichnis, falls es nicht existiert.
+
+        :param file_path: Der vollständige Pfad der Datei, die verschoben werden soll.
+        :param target_dir: Das Zielverzeichnis, in das die Datei verschoben wird.
+        :return: Der neue Dateipfad.
+        :raises FileNotFoundError: Falls die Datei nicht existiert.
+        """
+
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"Die Datei '{file_path}' existiert nicht.")
+
+        os.makedirs(target_dir, exist_ok=True)  # Erstelle das Verzeichnis, falls es nicht existiert
+
+        new_path = os.path.join(target_dir, os.path.basename(file_path))
+        shutil.move(file_path, new_path)
+        logger.info(f"Datei verschoben: {file_path} -> {new_path}")
 
     def extract_text_from_pdf(self, file_path):
         logger.info("Extrahiere Text aus PDF: %s", file_path)
