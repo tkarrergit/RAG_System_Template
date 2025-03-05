@@ -20,7 +20,7 @@
 
 ## Projektbeschreibung:
 
-Das RAG System ist eine Anwendung, die es Nutzern ermöglicht, Dokumente zu verarbeiten und auf Grundlage dieser Dokumente automatisiert Fragen zu stellen und Antworten zu generieren. Das System nutzt fortschrittliche Technologien wie **Spracherkennung** und **LLM-Integration**, um ein effizientes und interaktives Frage-Antwort-System zu bieten.
+Das RAG System ist eine Anwendung, die es Nutzern ermöglicht, Dokumente zu verarbeiten und auf Grundlage dieser Dokumente Fragen zu stellen und Antworten zu generieren. Das System nutzt fortschrittliche Technologien wie **Spracherkennung** und **LLM-Integration**, um ein effizientes und interaktives Frage-Antwort-System zu bieten.
 
 Dieses Projekt wurde entwickelt, um die automatische Verarbeitung von Textdokumenten mit modernen AI-Methoden zu demonstrieren und zu üben, insbesondere die Extraktion von Texten, die Generierung von Embeddings und die Nutzung eines **Retriever-Augmented Generation (RAG)** Systems zur Beantwortung von Fragen basierend auf gespeicherten Dokumenten.
 
